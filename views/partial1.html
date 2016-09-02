@@ -1,0 +1,37 @@
+<div class="wrapper login-page">
+    <h3>Sign-in</h3>
+    <div class="middle_section">
+        <div class="logo">
+            <div class="bounce">
+                <img class="dragme" src="../public/img/twc-logo.png" alt="TWC logos"/>
+            </div>
+            <div class="clearfix"></div>
+            <span class="shadow clearfix">&nbsp;</span>
+        </div>
+        <form id="logForm" name="frm" role="form" ng-submit="vm.Login()">
+            <md-content>
+                <md-input-container class="md-block">
+                    <label>User Name</label>
+                    <input required name="userName" ng-model="user.login">
+                    <div ng-messages="frm.userName.$error">
+                        <div ng-message="required">user name is required.</div>
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>Password</label>
+                    <input required name="password" ng-model="user.password">
+                    <div ng-messages="frm.password.$error">
+                        <div ng-message="required">password is required.</div>
+                    </div>
+                </md-input-container>
+            </md-content>
+            <p>Don't have an account?
+                <a href="">Sign-up</a>
+            </p>
+            <md-button class="green-btn" type="submit">
+                Login
+            </md-button>          
+        </md-content>
+    </form>
+
+</div>

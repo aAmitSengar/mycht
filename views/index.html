@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title data-ng-bind="page.title"></title>
+   <script src='../public/bower_components/jquery/dist/jquery.js'></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="../public/css/font-awesome.min.css">
+    <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.0-rc.5/angular-material.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://material.angularjs.org/1.1.0-rc.5/docs.css">
+
+
+
+    <link href="../node_modules/angular-material/angular-material.css" rel="stylesheet" type="text/css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="../public/css/bootstrap.min.css">
+  <!--  <link rel="stylesheet" href='../public/bower_components/angular-emoji-picker/dist/css/emoji-picker.css'></script>-->
+    <link rel="stylesheet" href='../public/bower_components/nanoscroller/bin/css/nanoscroller.css'></link>
+    <link rel="stylesheet" href='../public/bower_components/angular-emoji-popup/dist/css/emoji.min.css'></link>
+
+    <link href="../public/css/app.css" rel="stylesheet" type="text/css">
+    <!-- Custome stylesheet
+    <link rel="stylesheet" href="../public/css/jquery.mCustomScrollbar.css"> -->
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (Notification.permission !== "granted")
+            Notification.requestPermission();
+    });
+    </script>
+
+    <style>
+        .dragme {
+            -webkit-user-select: none;
+            -webkit-app-region: drag;
+        }
+        button, a, input,textarea, .ng-view {
+            -webkit-app-region: no-drag;
+        }
+    </style>
+
+</head>
+<body ng-app="myApp" class="chat-body">
+    <!--class="chat-body"-->
+<header class="header chat_top_header" style="-webkit-app-region: drag">
+    <div class="logo">
+        <a href="" class="dragme"><img src="../public/img/logo.png" alt="logo"></a>
+    </div>
+    <div class="side-icon">
+        <a id="min-btn-login" class="sidebar-icon minimize-icon" href=""></a>
+        <a id="close-btn-login" class="sidebar-icon close-icon" href=""></a>
+        <span class="tp-right"  ng-show="login">
+                <a class="logo-icon" href=""><img src="../public/img/logo-icon.png" /></a>
+            </span>
+    </div>
+</header>
+<!-- All of the Node.js APIs are available in this renderer process. -->
+<!--
+We are using node <script>document.write(process.versions.node)</script>,
+Chromium <script>document.write(process.versions.chrome)</script>,
+and Electron <script>document.write(process.versions.electron)</script>.
+-->
+ <div class="ng-view" autoscroll>
+    <!-- 2 Views will goes here------------------------>
+</div>
+  <!--js-->
+ <script src='../public/bower_components/jquery/dist/jquery.js'></script>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="../public/bower_components/angular/angular.js"></script>
+<script src="../public/bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="../public/bower_components/angular-aria/angular-aria.min.js"></script>
+<script src="../public/bower_components/angular-messages/angular-messages.min.js"></script>
+<script src="../public/bower_components/angular-material/angular-material.js"></script>
+<script src="../public/bower_components/svg-assets-cache.js/svg-assets-cache.js"></script>
+<!--js-->
+<!--
+<script src="../node_modules/angular-perfect-scrollbar-2/dist/index.js"></script>
+<script src="../public/bower_components/perfect-scrollbar/css/perfect-scrollbar.css"></script>
+-->
+
+
+<script src='../public/bower_components/angular-route/angular-route.js'></script>
+<script src='../node_modules/angular-resource/angular-resource.js'></script>
+<script src='../node_modules/angular-sanitize/angular-sanitize.js'></script>
+<script src='../public/bower_components/angular-socket-io/socket.js'></script>
+
+
+<script src='../public/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.js'></script>
+<script src='../public/bower_components/angular-nanoscroller/scrollable.js'></script>
+<script src='../public/bower_components/angular-emoji-popup/src/js/app.js'></script>
+<script src='../public/bower_components/angular-emoji-popup/src/js/config.js'></script>
+<script src='../public/bower_components/angular-emoji-popup/dist/js/emoji.min.js'></script>
+
+<!--
+<script src='../public/bower_components/angular-strap/dist/angular-strap.min.js'></script>
+<script src='../public/bower_components/angular-strap/dist/angular-strap.tpl.min.js'></script>
+
+
+
+
+<script src='../public/bower_components/angular-emoji-picker/dist/js/emoji-picker.js'></script>
+
+-->
+<!--                Application Files---------------------------------->
+<script src='../public/js/app.js'></script>
+<script src='../public/js/flash.service.js'></script>
+<script src='../public/js/services.js'></script>
+<script src='../public/js/controllers.js'></script>
+<script src='../public/js/ChatController.js'></script>
+<script src='../public/js/filters.js'></script>
+<script src='../public/js/directives.js'></script>
+<!--                Application Files---------------------------------->
+
+ <!--<script src='../public/js/scrollbars.js'></script>
+ <script src='../public/js/jquery.mCustomScrollbar.concat.min.js'></script>-->
+  <script>
+      // You can also require other files to run in this process
+      require('../renderer.js')
+  </script>
+</body>
+
+</html>

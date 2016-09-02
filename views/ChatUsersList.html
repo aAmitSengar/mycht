@@ -1,0 +1,27 @@
+<!--<perfect-scrollbar class="scroll-wrapper" opts="scrollopts" include-padding='true'>-->
+<div scrollable watch-collection="usrlist" class="scroll-wrapper" static>
+    <div
+        ng-repeat="usr in usrlist| filter:searchFish"
+        ng-class="currentUser.memberId!=undefined && currentUser.memberId!=0 && currentUser.memberId==usr.memberId?'active':''"
+        class="dr-list-box"
+        ng-click="vm.ShowChat(usr,$index)">
+        <div class="icon-user">
+            <div class="dr-iconbox">
+                <img src="../public/img/Dietitian.jpg" alt="">
+                <div class="online-stuts-box" ng-show="usr.IsOnline"></div>
+                <div class="offline-stuts-box" ng-hide="usr.IsOnline"></div>
+            </div>
+        </div>
+        <div class="chatdr-name">
+            <h4>{{usr.memberName}}</h4>
+            <span ng-bind-html="usr.LastMsg| colonToSmiley"></span>
+        </div>
+        <div class="last-seentime">
+            <p>{{usr.LastMsgTime| date : "h:mm a"}}</p>
+            <div class="chat-vlue" ng-if="usr.UnreadCount && usr.UnreadCount>0">
+                <p>{{usr.UnreadCount}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!--</perfect-scrollbar>-->

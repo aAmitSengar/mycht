@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Client Chat</title>
+        <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic"> -->
+        <link href="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.0-rc.5/angular-material.css" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- <link href="https://material.angularjs.org/1.1.0-rc.5/docs.css" rel="stylesheet" type="text/css"> -->
+
+        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+        <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-route.min.js"></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+        <!-- <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-114/svg-assets-cache.js"></script> -->
+        <script src="https://cdn.gitcdn.link/cdn/angular/bower-material/v1.1.0-rc.5/angular-material.js"></script>
+        <style>
+            md-input-container textarea[md-no-autogrow].md-input {
+                height: inherit;
+                overflow-y: auto;
+            }
+            .userchatbox-wrap {
+                margin-top: 10px;
+                float: left;
+                width: 75%;
+            }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                outline: medium none;
+                padding: 0;
+            }
+            .admin-chatwrap {
+                margin-top: 0;
+                float: right;
+                width: 100%;
+                margin-right: 0;
+            }
+            .clearfix {
+                clear: both;
+            }
+            .pull-right {
+                float: right!important;
+            }
+            .admin-box-area,
+            .user-box-area {
+                float: left;
+                max-width: calc(100% - 40px);
+                position: relative;
+                margin-bottom: 20px;
+            }
+            .admin-chat-text {
+                background: #817ecb;
+                padding: 5px 10px;
+                float: left;
+                margin-right: 15px;
+                border-radius: 5px 5px 0 5px;
+                max-width: 100%;
+                margin-top: 5px;
+                position: relative;
+                color: #fff;
+                word-break: break-word;
+            }
+            .admin-writing-time {
+                clear: both;
+                display: inline-block;
+                position: absolute;
+                right: 15px;
+                text-align: right;
+                bottom: -20px;
+                width: 200px;
+            }
+            .admin-chatwrap .dr-iconbox,
+            .download-filewrap .dr-iconbox,
+            .userchatbox-wrap .dr-iconbox {
+                width: 40px;
+                height: 40px;
+            }
+            .dr-iconbox {
+                float: left;
+                width: 56px;
+                height: 56px;
+                position: relative;
+                overflow: hidden;
+                background: #e1e1e1;
+                border: 1px solid #e1e1e1;
+                border-radius: 50%;
+            }
+            .user-chat-text {
+                background: #fff;
+                color: black;
+                padding: 5px 10px;
+                margin-left: 15px;
+                margin-top: 5px;
+                display: inline-block;
+                max-width: 100%;
+                position: relative;
+                border-radius: 5px 5px 5px 0;
+            }
+            .user-writing-time {
+                clear: both;
+                display: inline-block;
+                position: absolute;
+                right: 0;
+                text-align: right;
+                bottom: -20px;
+            }
+            .toolbardemoScrollShrink .face {
+                width: 48px;
+                margin: 16px;
+                border-radius: 48px;
+                border: 1px solid #ddd;
+            }
+
+        </style>
+    </head>
+    <body ng-app="MyApp">
+        <div ng-controller="chatCtrl" layout="column" ng-cloak class="md-inline-form">
+            <md-content md-theme="docs-dark">
+                <div ng-if="!isConnected">
+                    <form ng-submit="ConnectUser()">
+                        <md-input-container>
+                            <label>MemberId</label>
+                            <input ng-model="CurrentUser.memberid" required>
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Name</label>
+                            <input ng-model="CurrentUser.memberName" required>
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Expert</label>
+                            <md-select ng-model="CurrentUser.expertType" required>
+                                <md-option ng-repeat="exprt in experts" value="{{exprt.short}}" ng-disabled="!exprt.isOnline">
+                                    {{exprt.type}}
+                                </md-option>
+                            </md-select>
+
+                        </md-input-container>
+                        <md-input-container>
+                            <md-button type="submit">Connect</md-button>
+                        </md-input-container>
+                    </form>
+                </div>
+            </md-content>
+            <div ng-if="isConnected" layout="column" style="height:300px">
+                <md-toolbar>
+                    <div class="md-toolbar-tools">
+                        <h3>
+                            <span>Chat :
+                                <b>{{CurrentUser.memberName}}</b>
+                                to
+                                <b>{{CurrentUser.expertType}}</b>
+                            </span>
+                        </h3>
+                    </div>
+                </md-toolbar>
+                <md-content flex>
+                    <md-list>
+                        <md-list-item class="md-1-line" ng-repeat="cht in chats" id="anchor{{$index}}">
+                            <div ng-if="cht.sendBy=='M'" class="userchatbox-wrap clearfix">
+                                <div class="dr-iconbox">
+                                    <img class="circle" width="40px" height="40px" src="../public/img/user-say.png" alt="cht.memberName"/>
+                                </div>
+                                <div class="user-box-area">
+                                    <div class="user-chat-text">
+                                        <div ng-bind="cht.Msg"></div>
+                                    </div>
+                                    <!-- <div class="text-right user-writing-time">
+                                        <p>{{cht.msgDate}}</p>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div ng-if="cht.sendBy!='M'" class="admin-chatwrap clearfix">
+                                <div class="pull-right">
+                                    <div class="admin-box-area">
+                                        <div class="admin-chat-text">
+                                            <div ng-bind="cht.Msg"></div>
+                                        </div>
+                                        <!-- <div class="text-left admin-writing-time">
+                                            <p>{{cht.msgDate}}</p>
+                                        </div> -->
+                                    </div>
+                                    <div class="dr-iconbox">
+                                        <img class="circle" width="40px" height="40px" src="../public/img/dr-chat.jpg" alt="cht.memberName">
+                                    </div>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </div>
+
+            <md-input-container ng-if="isConnected">
+                <textarea
+                    ng-keypress="check($event, $event.keyCode)"
+                    placeholder="Type message here"
+                    minlength="1"
+                    maxlength="1500"
+                    md-maxlength="1500"
+                    rows="3"
+                    class="textarea-control"
+                    ng-model="emojiMessage.messagetext"
+                    style="overflow: hidden; word-wrap: break-word; resize: none;"></textarea>
+                <a href="" id="submitBtn" name="submitBtn" ng-click="emojiMessage.replyToExpert()">
+                    <i class="material-icons">send</i>
+                </a>
+            </md-input-container>
+
+            <script>
+                angular.module('MyApp', ['ngMaterial', 'ngMessages']).config(function($mdThemingProvider) {
+                    // Configure a dark theme with primary foreground yellow
+                    $mdThemingProvider.theme('docs-dark', 'default').primaryPalette('yellow').dark();
+                });
+                // angular.module("MyApp").factory('socket', function(socketFactory) {     return socketFactory({prefix: 'foo', ioSocket: io.connect('http://192.168.1.91:3000')}); });
+
+                angular.module("MyApp").controller('chatCtrl', function($scope, $anchorScroll, $location) {
+                    var socket = io.connect("http://192.168.1.91:3000");
+                    function Init() {
+                        $scope.CurrentUser = new Object();
+                        /*For Testing Only*/
+                      //  $scope.CurrentUser.memberid = 123;
+                      //  $scope.CurrentUser.memberName = "123Member";
+                        /*For Testing Only*/
+
+                        $scope.decodeType = 'colon';
+                        $scope.emojiMessage = {};
+                        $scope.chats = [];
+                        $scope.isConnected = false;
+                        socket.emit("checkExpertStatus");
+                    }
+                    Init();
+                    $scope.gotoAnchor = function() {
+                        var x = $scope.chats.length - 1;
+                        var newHash = 'anchor' + x;
+                        if ($location.hash() !== newHash) {
+                            // set the $location.hash to `newHash` and $anchorScroll will automatically scroll to it
+                            $location.hash('anchor' + x);
+                        } else {
+                            // call $anchorScroll() explicitly, since $location.hash hasn't changed
+                            $anchorScroll();
+                        }
+                    };
+
+                    socket.on("onCheckExpertStatus", function(expertStatus) {
+                        $scope.experts = expertStatus;
+                        $scope.$apply();
+                    });
+
+                    $scope.ConnectUser = function() {
+                        if ($scope.isConnectedToIO) {
+                            if ($scope.CurrentUser.memberid > 0 && $scope.CurrentUser.memberName.length > 0 && $scope.CurrentUser.expertType.length > 0) {
+                                socket.emit("userConnect", {
+                                    memberId: $scope.CurrentUser.memberid,
+                                    appId: 1,
+                                    expertType: $scope.CurrentUser.expertType
+                                });
+                            }
+                        }
+                    }
+                    $scope.emojiMessage.replyToExpert = function() {
+                        if ($scope.emojiMessage.messagetext.length > 0) {
+                            var msgToSend = {
+                                memberId: parseInt($scope.CurrentUser.memberid),
+                                appId: 1,
+                                memberName: $scope.CurrentUser.memberName,
+                                expertType: $scope.CurrentUser.expertType,
+                                message: $scope.emojiMessage.messagetext,
+                                isSavedFromMobile: false
+                            };
+                            socket.emit("sendMessageByUser", msgToSend);
+                            $scope.emojiMessage.messagetext = "";
+                        }
+                    }
+                    socket.on("receiveMessege", function(receivedMsg) {
+                        receivedMsg.LastMsgTime = receivedMsg.msgDate;
+                        receivedMsg.UnreadCount = 0;
+                        $scope.CurrentUser.IsOnline = true;
+                        $scope.CurrentUser.LastMsg = receivedMsg.Msg;
+                        $scope.chats.push(receivedMsg);
+                        $scope.gotoAnchor();
+                        $scope.$apply();
+                        //  notifyMe(receivedMsg.Msg, "New Message");
+                    });
+
+                    socket.on("connect", function() {
+                        $scope.isConnectedToIO = true;
+                        $scope.$apply();
+                    });
+
+                    socket.on("userConnected", function(expertStatus) {
+                        $scope.isConnected = true;
+                        $scope.$apply();
+                        //  alert("expertStatus " + JSON.stringify(expertStatus));
+                    });
+
+                    socket.on("expertConnected", function(expertType) {
+                        socket.emit("checkExpertStatus");
+                    });
+                    socket.on("expertDisonnected", function(expertType) {
+                        socket.emit("checkExpertStatus");
+                    });
+
+                    socket.on("expertAgainConnected", function() {
+                        alert("expertAgainConnected");
+                    });
+                    socket.on("expertAgainDisconnected", function() {
+                        alert("expertAgainDisconnected");
+                    });
+
+                    function notifyMe(notifyText, notifyTitle) {
+                        if (!Notification) {
+                            alert('Desktop notifications not available in your browser. Try Chromium.');
+                            return;
+                        }
+                        if (Notification.permission !== "granted")
+                            Notification.requestPermission();
+                        else {
+                            var notification = new Notification(notifyTitle, {
+                                icon: "../icon.ico",
+                                body: notifyText
+                            });
+                        }
+                    }
+                    $scope.check = function(event, keyCode) {
+                        if (keyCode == 13)
+                            $scope.emojiMessage.replyToExpert();
+                        }
+                    });
+            </script>
+        </body>
+    </html>
